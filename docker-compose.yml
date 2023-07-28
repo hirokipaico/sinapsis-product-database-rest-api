@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  sinapsis-dev-mysql-service:
+    container_name: sinapsis-dev-mysql-container
+    image: mysql:5.7.42
+    command: --init-file /docker-entrypoint-initdb.d/init.sql
+    restart: always
+    ports:
+      - 3306:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: FWntl7yyyDX6Th5hwv2x0BKT
+      MYSQL_USER: backend_user
+      MYSQL_PASSWORD: SZw2iZr7YTZ73d79
+      MYSQL_DATABASE: product_db
+    volumes:
+      - ./mysql_data:/var/lib/mysql
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
