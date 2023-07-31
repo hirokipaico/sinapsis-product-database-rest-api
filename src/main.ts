@@ -8,6 +8,7 @@ import { swaggerDocumentConfig, customOptions } from './config/swagger.config';
 import { LoggingInterceptor } from './logging/logging.interceptor';
 import * as passport from 'passport';
 import * as session from 'express-session';
+import * as cookieParser from 'cookie-parser';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -15,6 +16,7 @@ async function bootstrap() {
 
   app.useGlobalInterceptors(new LoggingInterceptor());
 
+  app.use(cookieParser());
   app.use(
     session({
       secret: configService.get<string>('PASSPORT_SECRET'),

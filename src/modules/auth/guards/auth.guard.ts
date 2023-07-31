@@ -1,6 +1,7 @@
 import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
+import { Request } from 'express';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -11,11 +12,11 @@ export class AuthGuard implements CanActivate {
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     console.log('Entering AuthGuard... checking request...');
-    const request = context.switchToHttp().getRequest();
-    console.log('Extracting token from header...');
-    const token = this.extractTokenFromHeader(request);
+    const request = context.switchToHttp().getRequest<Request>();
+    console.log('Extracting token from cookie...');
+    const token = this.extractTokenFromCookie(request);
     if (!token) {
-      console.log('There was no token in header...');
+      console.log('There was no token in cookie...');
       return false; // Return false instead of throwing UnauthorizedException
     }
 
@@ -33,8 +34,7 @@ export class AuthGuard implements CanActivate {
     }
   }
 
-  private extractTokenFromHeader(request: Request): string | undefined {
-    const [type, token] = request['user'].split(' ') ?? [];
-    return type === 'Bearer' ? token : undefined;
+  private extractTokenFromCookie(request: Request): string | undefined {
+    return request.cookies?.access_token;
   }
 }
