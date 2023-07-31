@@ -5,6 +5,7 @@ import {
   ManyToOne,
   JoinColumn,
 } from 'typeorm';
+import { Exclude } from 'class-transformer';
 import { Category } from 'src/modules/category/entities/category.entity';
 
 @Entity()
@@ -23,5 +24,6 @@ export class Product {
 
   @ManyToOne(() => Category, (category) => category.products)
   @JoinColumn({ name: 'category_id' })
+  @Exclude()
   category: Category;
 }

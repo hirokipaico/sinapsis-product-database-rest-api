@@ -1,6 +1,9 @@
 import { join } from 'path';
 import { ConfigService } from '@nestjs/config';
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
+import { User } from 'src/modules/auth/entities/user.entity';
+import { Category } from 'src/modules/category/entities/category.entity';
+import { Product } from 'src/modules/product/entities/product.entity';
 
 const entitiesPath = join(
   __dirname,
@@ -8,8 +11,10 @@ const entitiesPath = join(
   'modules',
   '**',
   'entities',
-  '*.entity{.ts,.js}',
+  '*.entity.ts',
 );
+
+console.log(entitiesPath);
 
 const typeOrmConfig = async (
   configService: ConfigService,
@@ -27,7 +32,7 @@ const typeOrmConfig = async (
     username: dbUsername,
     password: dbPassword,
     database: dbName,
-    entities: [entitiesPath],
+    entities: [User, Category, Product],
     synchronize: true,
   };
 };

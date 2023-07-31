@@ -49,7 +49,6 @@ export class ProductService {
 
     const products = await this.productRepository.find({
       where: { category },
-      relations: ['category'],
     });
 
     if (products.length === 0) {
@@ -113,7 +112,7 @@ export class ProductService {
   }
 
   /**
-   * Update a product by its ID.
+   * Update a product by its ID with a product data transfer object (DTO).
    *
    * @param {number} id - The ID of the product to update.
    * @param {ProductDto} productDto - The DTO containing the updated product data.
@@ -123,19 +122,19 @@ export class ProductService {
    * @returns {Promise<Product>} The updated product.
    */
   async update(id: number, productDto: ProductDto): Promise<Product> {
+    const errors = await validate(productDto);
+    if (errors.length > 0) {
+      throw new BadRequestException(
+        'Validation failed. Please check the request body to comply with productDto schema.',
+      );
+    }
+
     const existingProduct = await this.productRepository.findOne({
       relations: ['category'],
       where: { id: id },
     });
     if (!existingProduct) {
       throw new ProductIdNotFoundExceptionResponse(id);
-    }
-
-    const errors = await validate(productDto);
-    if (errors.length > 0) {
-      throw new BadRequestException(
-        'Validation failed. Please check the request body to comply with productDto schema.',
-      );
     }
 
     existingProduct.name = productDto.name;

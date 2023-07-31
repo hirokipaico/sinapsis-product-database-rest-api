@@ -1,6 +1,12 @@
-import { DocumentBuilder } from '@nestjs/swagger';
+import { DocumentBuilder, SwaggerCustomOptions } from '@nestjs/swagger';
 
-const swaggerDocumentConfig = new DocumentBuilder()
+export const customOptions: SwaggerCustomOptions = {
+  swaggerOptions: {
+    oauth2RedirectUrl: '/api/docs/oauth2-redirect',
+  },
+};
+
+export const swaggerDocumentConfig = new DocumentBuilder()
   .setTitle('Sinapsis Product Database API')
   .setDescription(
     'API for searching and filtering products from a MySQL database.',
@@ -8,6 +14,5 @@ const swaggerDocumentConfig = new DocumentBuilder()
   .setVersion('1.0')
   .addTag('products', 'Endpoints for managing products')
   .addTag('categories', 'Endpoints for managing categories')
+  .addCookieAuth('access_token')
   .build();
-
-export default swaggerDocumentConfig;

@@ -22,15 +22,20 @@ import {
   ApiConflictResponse,
 } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common/pipes';
-import { AuthGuard } from 'src/auth/auth.guard';
 import { ExceptionResponse } from 'src/common/dtos/exception-response.dto';
 import { FailedValidationExceptionResponse } from 'src/common/exceptions/failed-validation.exception';
+import { AuthGuard } from 'src/modules/auth/guards/auth.guard';
 
 @ApiTags('products')
 @Controller('products')
 export class ProductController {
   constructor(private readonly productService: ProductService) {}
 
+  /**
+   * Get all products.
+   * @returns {Promise<Product[]>} A promise that resolves to an array of Product objects.
+   */
+  @UseGuards(AuthGuard)
   @Get()
   @ApiResponse({
     status: 200,
@@ -42,6 +47,11 @@ export class ProductController {
     return this.productService.findAll();
   }
 
+  /**
+   * Get products by category name.
+   * @param {string} category - The name of the category to filter products by.
+   * @returns {Promise<Product[]>} A promise that resolves to an array of Product objects that belong to the specified category.
+   */
   @Get(':category')
   @ApiParam({ name: 'category', description: 'Product category' })
   @ApiResponse({
@@ -60,6 +70,11 @@ export class ProductController {
     return this.productService.findByCategory(category);
   }
 
+  /**
+   * Get a product by ID.
+   * @param {number} id - The ID of the product to be found.
+   * @returns {Promise<Product>} A promise that resolves to the found Product object.
+   */
   @Get('id/:id')
   @ApiParam({ name: 'id', description: 'Product ID' })
   @ApiResponse({
@@ -75,6 +90,12 @@ export class ProductController {
     return this.productService.findById(id);
   }
 
+  /**
+   * Create a new product.
+   * @param {ProductDto} productDto - The product data to be saved.
+   * @returns {Promise<Product>} A promise that resolves to the created Product object.
+   * @throws {ExceptionResponse} If the specified category does not exist in the database.
+   */
   @Post()
   @ApiResponse({
     status: 201,
@@ -82,10 +103,9 @@ export class ProductController {
     type: Product,
   })
   @UsePipes(new ValidationPipe())
-  @UseGuards(AuthGuard)
   @ApiBody({ type: ProductDto, description: 'Product data' })
   @ApiNotFoundResponse({
-    description: 'Specified category does not exist in database.',
+    description: 'Specified category does not exist in the database.',
     type: ExceptionResponse,
   })
   @ApiBadRequestResponse({
@@ -94,13 +114,22 @@ export class ProductController {
     type: FailedValidationExceptionResponse,
   })
   @ApiConflictResponse({
-    description: 'Product already exists in database.',
+    description: 'Product already exists in the database.',
     type: ExceptionResponse,
   })
   async create(@Body() productDto: ProductDto): Promise<Product> {
     return this.productService.create(productDto);
   }
 
+  /**
+   * Update a product by ID.
+   * @param {number} id - The ID of the product to update.
+   * @param {ProductDto} productDto - The updated product data.
+   * @returns {Promise<Product>} The updated product.
+   * @throws {ExceptionResponse} If the product with the given ID is not found in the database.
+   * @throws {FailedValidationExceptionResponse} If given request body doesn't comply with DTO.
+   * @throws {ExceptionResponse} If the specified product category does not exist in the database.
+   */
   @Put('id/:id')
   @ApiParam({ name: 'id', description: 'Product ID' })
   @ApiResponse({
@@ -111,7 +140,7 @@ export class ProductController {
   @UsePipes(new ValidationPipe())
   @ApiBody({ type: ProductDto, description: 'Product data' })
   @ApiNotFoundResponse({
-    description: 'Category with the specified name not found.',
+    description: 'Product with the specified ID not found.',
     type: ExceptionResponse,
   })
   @ApiBadRequestResponse({
@@ -126,6 +155,12 @@ export class ProductController {
     return this.productService.update(id, productDto);
   }
 
+  /**
+   * Delete a product by ID.
+   * @param {number} id - The ID of the product to delete.
+   * @returns {Promise<void>} A promise that resolves when the product is deleted.
+   * @throws {ExceptionResponse} If the product with the given ID is not found.
+   */
   @Delete('id/:id')
   @ApiParam({ name: 'id', description: 'Product ID' })
   @ApiResponse({
