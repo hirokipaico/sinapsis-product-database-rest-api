@@ -20,7 +20,10 @@ import { RegisterDto } from '../dtos/register.dto';
 import { LoginDto } from '../dtos/login.dto';
 import { User } from '../entities/user.entity';
 import { AuthGuard } from '../guards/auth.guard';
-import { Response } from 'express';
+import { Response, response } from 'express';
+import { FailedValidationExceptionResponse } from 'src/common/exceptions/failed-validation.exception';
+import { ExceptionResponse } from 'src/common/dtos/exception-response.dto';
+import { AccessTokenResponseDto } from '../dtos/access-token.dto';
 
 const EXPIRATION_TIME_IN_SECONDS = 3600;
 const SECONDS_TO_MILISECONDS = 1000;
@@ -44,6 +47,7 @@ export class AuthController {
   @ApiResponse({
     status: 200,
     description: 'Returns accessToken',
+    type: AccessTokenResponseDto,
   })
   async signIn(
     @Body() loginDto: LoginDto,
@@ -64,28 +68,23 @@ export class AuthController {
    * @returns {Promise<void>}
    * @throws {ConflictException} If the username is already taken.
    */
-  @Post('register')
-  @ApiBody({
-    type: RegisterDto,
-    description: 'User registration data',
-  })
+  @Post('signup')
   @ApiResponse({
     status: 201,
-    description: 'Registers a new user',
+    description: 'Registers a new user and returns the access token',
+    type: AccessTokenResponseDto,
   })
   @ApiBadRequestResponse({
     description:
       'Invalid request body because of failed RegisterDto validation.',
-    type: Error,
+    type: FailedValidationExceptionResponse,
   })
   @ApiConflictResponse({
     description: 'Username is already taken.',
-    type: Error,
+    type: ExceptionResponse,
   })
-  async register(
-    @Body() registerDto: RegisterDto,
-    @Res() response,
-  ): Promise<void> {
+  @ApiBody({ type: RegisterDto, description: 'Register user data' })
+  async register(@Body() registerDto: RegisterDto): Promise<void> {
     await this.authService.registerUser(registerDto);
     const { access_token } = await this.authService.logInUser(registerDto);
 
@@ -96,7 +95,6 @@ export class AuthController {
       maxAge: EXPIRATION_TIME_IN_SECONDS * SECONDS_TO_MILISECONDS, // Set the expiration time in milliseconds
       sameSite: 'strict', // Set the cookie path to the auth endpoint
     });
-
     response.json({ message: 'User registered successfully' });
   }
 

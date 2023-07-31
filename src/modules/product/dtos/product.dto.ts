@@ -2,25 +2,45 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsString, IsDecimal } from 'class-validator';
 
 export class ProductDto {
-  @ApiProperty()
+  @ApiProperty({
+    example: 'Modern T-shirt',
+    description: 'Product name',
+  })
   @IsNotEmpty({
-    message: 'Must not be empty.',
+    message: 'Must not be empty',
   })
   @IsString()
   name: string;
 
-  @ApiProperty()
-  @IsNotEmpty()
+  @ApiProperty({
+    example: 'Short sleeve t-shirt in black color and white stripes for women.',
+    description: 'Product description',
+  })
+  @IsNotEmpty({
+    message: 'Must not be empty',
+  })
   @IsString()
   description: string;
 
-  @ApiProperty()
-  @IsNotEmpty()
+  @ApiProperty({
+    example: 'Clothing',
+    description: 'Product category',
+  })
+  @IsNotEmpty({
+    message: 'Must not be empty',
+  })
   @IsString()
   category: string;
 
-  @ApiProperty()
-  @IsNotEmpty()
+  @ApiProperty({
+    type: 'IsDecimal',
+    format: 'binary',
+    example: 129.9,
+    description: 'Price of product (in PEN)',
+  })
+  @IsNotEmpty({
+    message: 'Must not be empty',
+  })
   @IsDecimal(
     {
       force_decimal: true,

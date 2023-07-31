@@ -94,19 +94,14 @@ export class ProductController {
    * Create a new product.
    * @param {ProductDto} productDto - The product data to be saved.
    * @returns {Promise<Product>} A promise that resolves to the created Product object.
-   * @throws {ExceptionResponse} If the specified category does not exist in the database.
+   * @throws {FailedValidationExceptionResponse} If the request body fails ProductDTO validation.
+   * @throws {ExceptionResponse} If the product already exists in the database.
    */
   @Post()
   @ApiResponse({
     status: 201,
     description: 'Creates a new product',
     type: Product,
-  })
-  @UsePipes(new ValidationPipe())
-  @ApiBody({ type: ProductDto, description: 'Product data' })
-  @ApiNotFoundResponse({
-    description: 'Specified category does not exist in the database.',
-    type: ExceptionResponse,
   })
   @ApiBadRequestResponse({
     description:
@@ -117,6 +112,7 @@ export class ProductController {
     description: 'Product already exists in the database.',
     type: ExceptionResponse,
   })
+  @ApiBody({ type: ProductDto, description: 'Product data' })
   async create(@Body() productDto: ProductDto): Promise<Product> {
     return this.productService.create(productDto);
   }
