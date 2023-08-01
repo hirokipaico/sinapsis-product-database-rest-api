@@ -6,6 +6,9 @@ import { ProductController } from './controllers/product.controller';
 import { CategoryModule } from '../category/category.module';
 import { PassportModule } from '@nestjs/passport';
 import { JwtService } from '@nestjs/jwt';
+import { APP_GUARD } from '@nestjs/core';
+import { AuthGuard } from '../auth/guards/auth.guard';
+import { CategoryService } from '../category/services/category.service';
 
 @Module({
   imports: [
@@ -14,6 +17,14 @@ import { JwtService } from '@nestjs/jwt';
     PassportModule,
   ],
   controllers: [ProductController],
-  providers: [ProductService, JwtService],
+  providers: [
+    CategoryService,
+    ProductService,
+    JwtService,
+    {
+      provide: APP_GUARD,
+      useClass: AuthGuard,
+    },
+  ],
 })
 export class ProductModule {}

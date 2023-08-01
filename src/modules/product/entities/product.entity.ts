@@ -11,42 +11,24 @@ import { ApiProperty } from '@nestjs/swagger';
 
 @Entity()
 export class Product {
-  @ApiProperty({
-    example: 234567890,
-    description: 'Product ID',
-  })
+  @ApiProperty()
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ApiProperty({
-    example: 'Samsung TV LED QLED',
-    description: 'Product name',
-  })
+  @ApiProperty()
   @Column()
   name: string;
 
-  @ApiProperty({
-    example: 'Big LED TV perfect for living rooms.',
-    description: 'Product description.',
-  })
+  @ApiProperty()
   @Column('text')
   description: string;
 
-  @ApiProperty({
-    example: '2499.90',
-    description: 'Product price (in PEN)',
-  })
-  @Column()
+  @ApiProperty()
+  @Column({ type: 'decimal', precision: 10, scale: 2 })
   price: number;
 
-  @ApiProperty({
-    example: {
-      id: 1,
-      name: 'Electronics',
-    },
-    description: 'Product category',
-  })
-  @ManyToOne(() => Category, (category) => category.products)
+  @ApiProperty()
+  @ManyToOne(() => Category, (category) => category.products, { eager: true })
   @JoinColumn({ name: 'category_id' })
   @Exclude()
   category: Category;

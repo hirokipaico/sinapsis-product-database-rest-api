@@ -1,21 +1,20 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { ResponseDto } from './response.dto';
 
 /**
- * Exception response for Swagger Documentation. It not an error object.
+ * Response for Swagger Documentation.
  * @var statusCode The response's status code to show in documentation.
  * @var message The response's message to show in documentation.
  */
-export class ExceptionResponseDto implements ResponseDto {
+export class ResponseDto {
   @ApiProperty({
     description: 'HTTP-Exception status',
-    example: 400,
+    example: 200,
   })
   statusCode: number;
 
   @ApiProperty({
     description: 'HTTP-Exception description',
-    example: 'Error description',
+    example: 'Response description',
   })
   message: string;
 

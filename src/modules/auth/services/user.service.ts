@@ -1,8 +1,4 @@
-import {
-  Injectable,
-  NotFoundException,
-  BadRequestException,
-} from '@nestjs/common';
+import { Injectable, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from '../entities/user.entity';
@@ -20,10 +16,14 @@ export class UsersService {
    * @returns {Promise<User>} A promise that resolves to the found User object.
    */
   async findOneById(id: number): Promise<User> {
-    const user = await this.usersRepository.findOne({
-      where: { id: id },
-    });
-    return user;
+    try {
+      const user = await this.usersRepository.findOne({
+        where: { id: id },
+      });
+      return user;
+    } catch (error) {
+      throw error;
+    }
   }
 
   /**
@@ -33,11 +33,12 @@ export class UsersService {
    * @throws {NotFoundException} If no user is found with the specified username.
    */
   async findOneByUsername(username: string): Promise<User> {
-    const user = await this.usersRepository.findOne({ where: { username } });
-    if (!user) {
-      throw new NotFoundException('User not found.');
+    try {
+      const user = await this.usersRepository.findOne({ where: { username } });
+      return user;
+    } catch (error) {
+      throw error;
     }
-    return user;
   }
 
   /**
@@ -47,14 +48,17 @@ export class UsersService {
    * @throws {Error} If the provided data is incomplete or missing required fields.
    */
   async createUser(data: Partial<User>): Promise<User> {
-    if (!data.username || !data.password) {
-      throw new BadRequestException(
-        'Username and password are required to create a new user.',
-      );
+    try {
+      if (!data.username || !data.password) {
+        throw new BadRequestException(
+          'Username and password are required to create a new user.',
+        );
+      }
+      const user = this.usersRepository.create(data);
+      return await this.usersRepository.save(user);
+    } catch (error) {
+      throw error;
     }
-
-    const user = this.usersRepository.create(data);
-    return await this.usersRepository.save(user);
   }
 
   /**

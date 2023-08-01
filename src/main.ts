@@ -9,11 +9,12 @@ import { LoggingInterceptor } from './logging/logging.interceptor';
 import * as passport from 'passport';
 import * as session from 'express-session';
 import * as cookieParser from 'cookie-parser';
+import { ValidationPipe } from './common/pipes/validation/validation.pipe';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const configService = app.get(ConfigService);
-
+  app.useGlobalPipes(new ValidationPipe());
   app.useGlobalInterceptors(new LoggingInterceptor());
 
   app.use(cookieParser());

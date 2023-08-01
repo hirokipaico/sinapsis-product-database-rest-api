@@ -1,20 +1,31 @@
-import { PipeTransform, Injectable, ArgumentMetadata } from '@nestjs/common';
+import {
+  PipeTransform,
+  Injectable,
+  ArgumentMetadata,
+  Logger,
+} from '@nestjs/common';
 import { validate } from 'class-validator';
 import { plainToClass } from 'class-transformer';
-import { FailedValidationExceptionResponse } from 'src/common/exceptions/failed-validation.exception';
+import { FailedValidationException } from 'src/common/exceptions/auth/failed-validation.exception';
 
 @Injectable()
 export class ValidationPipe implements PipeTransform<any> {
+  private readonly logger = new Logger(ValidationPipe.name);
+
   async transform(value: any, { metatype }: ArgumentMetadata): Promise<any> {
+    this.logger.debug('Input value:', value);
+
     if (!metatype || !this.toValidate(metatype)) {
       return value;
     }
 
     const object = plainToClass(metatype, value);
+    console.log('Transformed object:', object);
     const errors = await validate(object);
 
     if (errors.length > 0) {
-      throw new FailedValidationExceptionResponse(errors.toString());
+      console.log('Validation errors:', errors);
+      throw new FailedValidationException(errors.toString());
     }
 
     return value;
