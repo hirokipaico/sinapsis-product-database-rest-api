@@ -1,5 +1,4 @@
-<p align="center" style="font-size: 36px;">Sinapsis product database API</p>
-<p align="center" style="font-size: 22px;">sinapsis-product-database-rest-api</p>
+#Sinapsis product database API
 
 ## Descripción
 
@@ -18,10 +17,10 @@ Siga los pasos a continuación para configurar y ejecutar la aplicación localme
 1. Clonar el repositorio:
 
 ```bash
-git clone https://github.com/your-username/sinapsis-product-database-rest-api.git
+git clone https://github.com/hirokipaico/sinapsis-product-database-rest-api.git
 cd sinapsis-product-database-rest-api
 ```
-2. Navegar hasta la dirección en tu archivo local e instalar las dependencias:
+2. Instalar las dependencias:
 ```bash
 npm install
 ```
@@ -147,7 +146,6 @@ Este endpoint permite registrar un nuevo producto.
 #### Request body:
 
 ```json
-Copy code
 {
   "name": "Nuevo Producto",
   "description": "Descripción del nuevo producto.",
