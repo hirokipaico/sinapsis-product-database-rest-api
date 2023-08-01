@@ -46,8 +46,8 @@ De esta manera, el servicio PhpMyAdmin debería ser accesible en http://localhos
 
 
 4. Configure las variables de entorno:
-Cree un archivo .env en el directorio raíz.
-Establezca las variables de entorno requeridas en un archivo llamado `development.env` (este archivo también se puede llamar `production.env`, pues está configurado para cargar variables de entorno de manera dinámica según si es entorno de desarrollo o producción mediante la variable de entorno `NODE_ENV` que es insertada en la consola al momento de correr `npm run start:dev` o `npm run start`):
+
+Cree o modifique el archivo llamado `development.env`, situado en `src/config/env`, para luego establecer las variables de entorno de la siguiente manera (este archivo también se puede llamar `production.env`, pues está configurado para cargar variables de entorno de manera dinámica según si es entorno de desarrollo o producción mediante la variable de entorno `NODE_ENV` que es insertada en la consola al momento de correr `npm run start:dev` o `npm run start`):
 
 ```makefile
 PORT=3001
@@ -67,9 +67,7 @@ JWT_SECRET=your_jwt_secret
 JWT_EXPIRATION_TIME=1h
 ```
 
-Sitúe este archivo dentro de la dirección `src/config/env` en el proyecto, para que pueda cargarse exitosamente.
-
-Nota: Si ha inicializado los contenedores en el archivo de `docker-compose.yml`, en su contenido se encuentra presente las variables de entorno (environment variables) necesarias para su conexión, de forma que puede copiar y pegarlo en el archivo.
+Nota: Si ha inicializado los contenedores en el archivo de `docker-compose.yml`, en su contenido se encuentra presente las variables de entorno (environment variables) necesarias para su conexión, de forma que puede copiar y pegarlo en el archivo. De la misma manera, el archivo `development.env` se ha incluido para empezar más rapidamente. Recuerda usar el archivo `production.env` en cuando decidas levantar el proyecto en un servidor en producción.
 
 5. Iniciar la aplicación:
 ```bash
@@ -197,9 +195,6 @@ Ninguno
 
 ## Documentación
 Las API están documentadas utilizando Swagger/OpenAPI. Puede acceder a la documentación de la API en http://localhost:3001/api/docs.
-
-## Pruebas
-El proyecto incluye pruebas unitarias para garantizar la corrección de la lógica de la aplicación. Puede ejecutar las pruebas utilizando el siguiente comando:
 
 ```bash
 npm run test
