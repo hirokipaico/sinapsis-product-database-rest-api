@@ -1,4 +1,4 @@
-#Sinapsis product database API
+# Sinapsis product database API
 
 ## Descripción
 
