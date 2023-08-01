@@ -39,7 +39,7 @@ docker-compose up -d
 
 Este archivo levanta dos contenedores:
 - `sinapsis-dev-mysql-container` (MySQL)
-- `sinapsis-dev-phymyadmin-container` PhpMyAdmin
+- `sinapsis-dev-phymyadmin-container` (PhpMyAdmin)
 
 De esta manera, el servicio PhpMyAdmin debería ser accesible en http://localhost:8080, por medio del cual usted podrá insertar directamente el contenido del archivo `dump.sql` para insertar los usuarios, productos y categorías.
 
