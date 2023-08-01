@@ -1,73 +1,212 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
+# Sinapsis product database API
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+## Descripción
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+Este repositorio contiene una aplicación backend desarrollada en Node.js con NestJS. La API está diseñada para gestionar productos y categorías y proporciona varios endpoints para manejar operaciones CRUD. La aplicación está conectada a una base de datos MySQL para almacenar los datos de productos y categorías.
 
-## Description
+## Requisitos
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+- Node.js
+- Base de datos MySQL
+- Docker/Docker Compose (opcional)
 
-## Installation
+## Inicio
+
+Siga los pasos a continuación para configurar y ejecutar la aplicación localmente:
+
+1. Clonar el repositorio:
 
 ```bash
-$ npm install
+git clone https://github.com/hirokipaico/sinapsis-product-database-rest-api.git
+cd sinapsis-product-database-rest-api
 ```
-
-## Running the app
+2. Instalar las dependencias:
+```bash
+npm install
+```
+3. Configurar la base de datos:
+Cree una base de datos MySQL con el nombre `sinapsis_product_db`.
+Importe el esquema de la base de datos utilizando el archivo `dump.sql` proporcionado:
 
 ```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+mysql -u tu_usuario -p sinapsis_product_db < dump.sql
 ```
 
-## Test
+De manera similar, puede usar el archivo `docker-compose.yml` presente en el repositorio para levantar contenedores con Docker Compose mediante el siguiente commando:
+```bash
+docker-compose up -d
+```
+
+Este archivo levanta dos contenedores:
+- `sinapsis-dev-mysql-container` (MySQL)
+- `sinapsis-dev-phymyadmin-container` PhpMyAdmin
+
+De esta manera, el servicio PhpMyAdmin debería ser accesible en http://localhost:8080, por medio del cual usted podrá insertar directamente el contenido del archivo `dump.sql` para insertar los usuarios, productos y categorías.
+
+
+4. Configure las variables de entorno:
+
+Cree o modifique el archivo llamado `development.env`, situado en `src/config/env`, para luego establecer las variables de entorno de la siguiente manera (este archivo también se puede llamar `production.env`, pues está configurado para cargar variables de entorno de manera dinámica según si es entorno de desarrollo o producción mediante la variable de entorno `NODE_ENV` que es insertada en la consola al momento de correr `npm run start:dev` o `npm run start`):
+
+```makefile
+PORT=3001
+
+# MySQL database connection variables
+DB_HOST=localhost
+DB_PORT=3306
+DB_USERNAME=db_username
+DB_PASSWORD=db_password
+DB_NAME=product_db # Nombre de database
+
+# Passport.js variables
+PASSPORT_SECRET=your_passport_secret
+
+# JWT variables
+JWT_SECRET=your_jwt_secret
+JWT_EXPIRATION_TIME=1h
+```
+
+Nota: Si ha inicializado los contenedores en el archivo de `docker-compose.yml`, en su contenido se encuentra presente las variables de entorno (environment variables) necesarias para su conexión, de forma que puede copiar y pegarlo en el archivo. De la misma manera, el archivo `development.env` se ha incluido para empezar más rapidamente. Recuerda usar el archivo `production.env` en cuando decidas levantar el proyecto en un servidor en producción.
+
+5. Iniciar la aplicación:
+```bash
+npm run start
+```
+La API ahora debería ser accesible en http://localhost:3001/api.
+
+## Principales endpoints
+
+### GET /api/products
+Este endpoint obtiene una lista de todos los productos y sus respectivas categorías, estando todos documentados a través de OpenAPI y Swagger.
+
+#### Parámetros:
+Ninguno
+#### Respuesta:
+
+```json
+[
+  {
+    "id": 1,
+    "name": "T-shirt",
+    "description": "Camiseta de manga corta en color negro y rayas blancas para mujeres.",
+    "price": "129.49",
+    "category": {
+      "name": "Ropa"
+    }
+  },
+  {
+    "id": 2,
+    "name": "Jeans",
+    "description": "Jeans de color azul y rayas negras para hombres.",
+    "price": "159.90",
+    "category": {
+      "name": "Ropa"
+    }
+  },
+  // ...
+]
+```
+
+### GET /api/products/:categoryName
+Este endpoint obtiene una lista de productos filtrados por categoría.
+
+#### Parámetros:
+- categoryName: El nombre de la categoría para filtrar.
+
+#### Respuesta:
+
+```json
+[
+  {
+    "id": 1,
+    "name": "T-shirt",
+    "description": "Camiseta de manga corta en color negro y rayas blancas para mujeres.",
+    "price": "129.49",
+    "category": {
+      "name": "Ropa"
+    }
+  },
+  {
+    "id": 2,
+    "name": "Jeans",
+    "description": "Jeans de color azul y rayas negras para hombres.",
+    "price": "159.90",
+    "category": {
+      "name": "Ropa"
+    }
+  },
+  // ...
+]
+```
+Nota: Si la categoría especificada no existe, la API devolverá un error.
+
+### POST /api/products
+Este endpoint permite registrar un nuevo producto.
+
+#### Request body:
+
+```json
+{
+  "name": "Nuevo Producto",
+  "description": "Descripción del nuevo producto.",
+  "category": "Ropa",
+  "price": 49.90
+}
+```
+Respuesta:
+
+```json
+{
+  "id": 7,
+  "name": "Nuevo Producto",
+  "description": "Descripción del nuevo producto.",
+  "price": "49.90",
+  "category": {
+    "name": "Ropa"
+  }
+}
+```
+
+### GET /api/categories
+Este endpoint obtiene una lista de todas las categorías.
+
+#### Parámetros:
+Ninguno
+
+#### Respuesta:
+
+```json
+[
+  {
+    "id": 1,
+    "name": "Ropa",
+    "description": "Artículos de ropa para la calle."
+  },
+  {
+    "id": 2,
+    "name": "Aire libre",
+    "description": "Descripción de la categoría."
+  },
+  // ...
+]
+```
+
+## Documentación
+Las API están documentadas utilizando Swagger/OpenAPI. Puede acceder a la documentación de la API en http://localhost:3001/api/docs.
 
 ```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+npm run test
 ```
 
-## Support
+## Tecnologías Utilizadas
+- Node.js
+- NestJS (con TypeScript)
+- MySQL
+- Docker/Docker compose
+- Swagger/OpenAPI
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+## Contribuciones
+Si desea contribuir a este proyecto, siéntase libre de crear una solicitud de extracción (pull request).
 
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](LICENSE).
+## Licencia
+Este proyecto está bajo la Licencia MIT. Consulte el archivo LICENSE para obtener más detalles.
