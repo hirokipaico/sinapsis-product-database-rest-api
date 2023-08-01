@@ -17,6 +17,11 @@ export class CategoryService {
     private readonly categoryRepository: Repository<Category>,
   ) {}
 
+  /**
+   * Retrieves all categories from the database.
+   * @returns {Promise<Category[]>} A promise that resolves to an array of categories.
+   * @throws {Error} If an error occurs during the operation, throws the error.
+   */
   async findAll(): Promise<Category[]> {
     try {
       return this.categoryRepository.find();
@@ -25,6 +30,12 @@ export class CategoryService {
     }
   }
 
+  /**
+   * Creates a new category.
+   * @param {CategoryDto} categoryDto - The DTO object containing category data.
+   * @returns {Promise<Category>} A promise that resolves to the newly created category.
+   * @throws {Error} If the category already exists or an error occurs during the operation, throws the error.
+   */
   async create(categoryDto: CategoryDto): Promise<Category> {
     try {
       const existingCategory = await this.categoryRepository.findOne({
@@ -32,7 +43,6 @@ export class CategoryService {
       });
 
       if (existingCategory) {
-        console.log('Exist category. Throwing CategoryAlreadyExistsException');
         throw new CategoryAlreadyExistsException(categoryDto.name);
       }
 
@@ -45,6 +55,12 @@ export class CategoryService {
     }
   }
 
+  /**
+   * Retrieves a category by its name.
+   * @param {string} name - The name of the category to retrieve.
+   * @returns {Promise<Category>} A promise that resolves to the retrieved category.
+   * @throws {Error} If the category is not found or an error occurs during the operation, throws the error.
+   */
   async findByName(name: string): Promise<Category> {
     try {
       const category = await this.categoryRepository.findOne({
@@ -59,6 +75,14 @@ export class CategoryService {
     }
   }
 
+  /**
+   * Updates an existing category.
+   * @param {string} categoryName - The name of the category to update.
+   * @param {CategoryDto} categoryDto - The DTO object containing the updated category data.
+   * @returns {Promise<Category>} A promise that resolves to the updated category.
+   * @throws {Error} If the category data is invalid, the category is not found,
+   *                or an error occurs during the operation, throws the error.
+   */
   async update(
     categoryName: string,
     categoryDto: CategoryDto,
@@ -88,6 +112,12 @@ export class CategoryService {
     }
   }
 
+  /**
+   * Deletes a category by its name.
+   * @param {string} categoryName - The name of the category to delete.
+   * @returns {Promise<Category>} A promise that resolves to the deleted category.
+   * @throws {Error} If the category is not found or an error occurs during the operation, throws the error.
+   */
   async delete(categoryName: string): Promise<Category> {
     try {
       const category = await this.findByName(categoryName);

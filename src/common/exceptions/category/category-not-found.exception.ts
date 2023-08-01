@@ -1,7 +1,7 @@
-import { NotFoundException } from '@nestjs/common';
+import { BadRequestException } from '@nestjs/common';
 
-export class CategoryNotFoundException extends NotFoundException {
+export class CategoryNotFoundException extends BadRequestException {
   constructor(categoryName: string) {
-    super(`Category with name '${categoryName}' not found.`);
+    super(`Category with name '${categoryName}' was not found.`);
   }
 }
